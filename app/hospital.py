@@ -1,5 +1,6 @@
 import csv
 import json
+import unicodedata
 from agenda import Agenda
 from paciente import Paciente
 from cita import Cita
@@ -10,7 +11,6 @@ from rich import print
 from rich.console import Console
 
 console = Console()
-
 
 class Hospital:
     def __init__(self):
@@ -35,8 +35,35 @@ class Hospital:
             (m for m in self.medicos if m.identificacion == identificacion), None
         )
 
+    def normalizar_texto(self, texto):
+        # Eliminar tildes y convertir a minúsculas
+        return ''.join(
+            c for c in unicodedata.normalize('NFD', texto)
+            if unicodedata.category(c) != 'Mn'
+        ).lower()
+
+    def especialidades_disponibles(self):
+        # Lista de especialidades únicas en el hospital, normalizadas
+        especialidades = set(self.normalizar_texto(m.especialidad) for m in self.medicos)
+        return sorted(especialidades)
+
     def buscar_medicos_por_especialidad(self, especialidad):
-        return [m for m in self.medicos if m.especialidad == especialidad]
+        especialidad_normalizada = self.normalizar_texto(especialidad)
+        
+        # Priorizar médicos cuyas especialidades contienen la palabra buscada
+        medicos_filtrados = [
+            m for m in self.medicos
+            if especialidad_normalizada in self.normalizar_texto(m.especialidad)
+        ]
+        
+        # Ordenar los médicos según la coincidencia: especialidades que empiezan con el término tienen prioridad
+        medicos_ordenados = sorted(
+            medicos_filtrados,
+            key=lambda m: self.normalizar_texto(m.especialidad).startswith(especialidad_normalizada),
+            reverse=True
+        )
+        
+        return medicos_ordenados
 
     def cargar_pacientes_desde_csv(self, archivo):
         try:

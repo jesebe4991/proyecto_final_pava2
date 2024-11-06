@@ -167,9 +167,18 @@ def buscar_medico(hospital):
 def agendar_cita(hospital):
     paciente_id = Prompt.ask("Ingrese la identificación del paciente")
     paciente = hospital.buscar_paciente(paciente_id)
+
     if paciente:
         especialidad = Prompt.ask("Ingrese la especialidad requerida")
         medicos_disponibles = hospital.buscar_medicos_por_especialidad(especialidad)
+        
+        if not medicos_disponibles:
+            print(f"No se encontró la especialidad '{especialidad}'. Las especialidades disponibles son:")
+            for especialidad in hospital.especialidades_disponibles():
+                print(f"- {especialidad}")
+            especialidad = Prompt.ask("Por favor, ingrese una especialidad de la lista anterior")
+            medicos_disponibles = hospital.buscar_medicos_por_especialidad(especialidad)
+
         if medicos_disponibles:
             print("Médicos disponibles:")
             for i, medico in enumerate(medicos_disponibles, 1):
@@ -182,7 +191,7 @@ def agendar_cita(hospital):
             cita = Cita(paciente, medico, fecha_hora)
             hospital.agenda.agendar_cita(cita)
         else:
-            print(f"No hay médicos disponibles para la especialidad {especialidad}")
+            print(f"No hay médicos disponibles para la especialidad '{especialidad}'")
     else:
         print("Paciente no encontrado")
 
