@@ -11,21 +11,12 @@ from cita import Cita
 
 console = Console()
 
-
 def cargar_datos_iniciales():
     hospital = Hospital()
-
-    # Cargar pacientes iniciales
     hospital.cargar_pacientes_desde_csv("data/pacientes.csv")
-
-    # Cargar médicos iniciales
     hospital.cargar_medicos_desde_json("data/medicos.json")
-
-    # Cargar citas iniciales
     hospital.cargar_citas_desde_csv("data/citas.csv")
-
     return hospital
-
 
 def mostrar_lista_pacientes(hospital):
     table = Table(title="[bold white]LISTA DE PACIENTES[/bold white]")
@@ -35,12 +26,9 @@ def mostrar_lista_pacientes(hospital):
     table.add_column("CORREO ELECTRÓNICO", style="yellow")
 
     for paciente in hospital.pacientes:
-        table.add_row(
-            paciente.identificacion, paciente.nombre, paciente.celular, paciente.correo
-        )
+        table.add_row(paciente.identificacion, paciente.nombre, paciente.celular, paciente.correo)
 
     console.print(table)
-
 
 def mostrar_lista_medicos(hospital):
     table = Table(title="[bold white]LISTA DE MÉDICOS[/bold white]")
@@ -50,12 +38,9 @@ def mostrar_lista_medicos(hospital):
     table.add_column("CELULAR", style="yellow")
 
     for medico in hospital.medicos:
-        table.add_row(
-            medico.identificacion, medico.nombre, medico.especialidad, medico.celular
-        )
+        table.add_row(medico.identificacion, medico.nombre, medico.especialidad, medico.celular)
 
     console.print(table)
-
 
 def mostrar_lista_citas(hospital):
     table = Table(title="[bold white]LISTA DE CITAS[/bold white]")
@@ -67,324 +52,264 @@ def mostrar_lista_citas(hospital):
 
     for cita in hospital.agenda.citas:
         urgente = "NO" if str(type(cita).__name__) == "Cita" else "SÍ"
-
-        table.add_row(
-            cita.paciente.nombre,
-            cita.medico.nombre,
-            cita.medico.especialidad,
-            cita.fecha_hora.strftime("%Y-%m-%d %H:%M"),
-            urgente,
-        )
+        table.add_row(cita.paciente.nombre, cita.medico.nombre, cita.medico.especialidad,
+                      cita.fecha_hora.strftime("%Y-%m-%d %H:%M"), urgente)
 
     console.print(table)
 
-
-def mostrar_menu():
+def mostrar_menu_principal():
     console.print(
         Panel.fit(
-            "1. Agregar paciente.\n"
-            "2. Agregar médico.\n"
-            "3. Agendar cita.\n"
-            "4. Cancelar cita.\n"
-            "5. Mover cita.\n"
-            "6. Ver citas de un paciente.\n"
-            "7. Ver citas de un médico.\n"
-            "8. Ver lista de pacientes.\n"
-            "9. Ver lista de médicos.\n"
-            "10. Buscar un paciente.\n"
-            "11. Buscar un médico.\n"
-            "12. Agendar cita urgente.\n"
-            "13. Agregar feedback a una cita.\n"
-            "14. Ver calificaciones de médicos.\n"
-            "15. Salir",
-            title="SISTEMA DE CITAS MÉDICAS",
+            "[1] Pacientes\n"
+            "[2] Médicos\n"
+            "[3] Citas\n"
+            "[4] Consultas/Reportes\n"
+            "[5] Salir",
+            title="SISTEMA DE CITAS MÉDICAS - Menú Principal",
             border_style="bold green",
         )
     )
 
+def mostrar_menu_pacientes():
+    console.print(
+        Panel.fit(
+            "[1] Agregar paciente\n"
+            "[2] Ver lista de pacientes\n"
+            "[3] Buscar paciente\n"
+            "[4] Regresar al menú principal",
+            title="Menú de Pacientes",
+            border_style="bold cyan",
+        )
+    )
+
+def mostrar_menu_medicos():
+    console.print(
+        Panel.fit(
+            "[1] Agregar médico\n"
+            "[2] Ver lista de médicos\n"
+            "[3] Buscar médico\n"
+            "[4] Regresar al menú principal",
+            title="Menú de Médicos",
+            border_style="bold cyan",
+        )
+    )
+
+def mostrar_menu_citas():
+    console.print(
+        Panel.fit(
+            "[1] Agendar cita\n"
+            "[2] Cancelar cita\n"
+            "[3] Mover cita\n"
+            "[4] Agendar cita urgente\n"
+            "[5] Ver citas de un paciente\n"
+            "[6] Ver citas de un médico\n"
+            "[7] Regresar al menú principal",
+            title="Menú de Citas",
+            border_style="bold cyan",
+        )
+    )
+
+def mostrar_menu_reportes():
+    console.print(
+        Panel.fit(
+            "[1] Ver calificaciones de médicos\n"
+            "[2] Agregar feedback a una cita\n"
+            "[3] Regresar al menú principal",
+            title="Menú de Consultas y Reportes",
+            border_style="bold cyan",
+        )
+    )
+
+def agregar_paciente(hospital):
+    identificacion = Prompt.ask("Ingrese la identificación del paciente")
+    nombre = Prompt.ask("Ingrese el nombre del paciente")
+    celular = Prompt.ask("Ingrese el celular del paciente")
+    correo = Prompt.ask("Ingrese el correo del paciente")
+    paciente = Paciente(identificacion, nombre, celular, correo)
+    hospital.agregar_paciente(paciente)
+
+def agregar_medico(hospital):
+    identificacion = Prompt.ask("Ingrese la identificación del médico")
+    nombre = Prompt.ask("Ingrese el nombre del médico")
+    celular = Prompt.ask("Ingrese el celular del médico")
+    especialidad = Prompt.ask("Ingrese la especialidad del médico")
+    medico = Medico(identificacion, nombre, celular, especialidad)
+    hospital.agregar_medico(medico)
+
+def buscar_paciente(hospital):
+    paciente_id = Prompt.ask("Ingrese la identificación del paciente")
+    paciente = hospital.buscar_paciente(paciente_id)
+    if paciente:
+        table = Table(title="[bold white]PACIENTE ENCONTRADO[/bold white]")
+        table.add_column("ID", style="cyan")
+        table.add_column("NOMBRE COMPLETO", style="magenta")
+        table.add_column("CELULAR", style="green")
+        table.add_column("CORREO ELECTRÓNICO", style="yellow")
+        table.add_row(paciente.identificacion, paciente.nombre, paciente.celular, paciente.correo)
+        console.print(table)
+    else:
+        print("Paciente no encontrado.")
+
+def buscar_medico(hospital):
+    medico_id = Prompt.ask("Ingrese la identificación del médico")
+    medico = hospital.buscar_medico(medico_id)
+    if medico:
+        table = Table(title="[bold white]MÉDICO ENCONTRADO[/bold white]")
+        table.add_column("ID", style="cyan")
+        table.add_column("NOMBRE COMPLETO", style="magenta")
+        table.add_column("ESPECIALIDAD", style="green")
+        table.add_column("CELULAR", style="yellow")
+        table.add_row(medico.identificacion, medico.nombre, medico.especialidad, medico.celular)
+        console.print(table)
+    else:
+        print("Médico no encontrado.")
+
+def agendar_cita(hospital):
+    paciente_id = Prompt.ask("Ingrese la identificación del paciente")
+    paciente = hospital.buscar_paciente(paciente_id)
+
+    if paciente:
+        especialidad = Prompt.ask("Ingrese la especialidad requerida")
+        medicos_disponibles = hospital.buscar_medicos_por_especialidad(especialidad)
+        
+        if not medicos_disponibles:
+            print(f"No se encontró la especialidad '{especialidad}'. Las especialidades disponibles son:")
+            for especialidad in hospital.especialidades_disponibles():
+                print(f"- {especialidad}")
+            especialidad = Prompt.ask("Por favor, ingrese una especialidad de la lista anterior")
+            medicos_disponibles = hospital.buscar_medicos_por_especialidad(especialidad)
+
+        if medicos_disponibles:
+            print("Médicos disponibles:")
+            for i, medico in enumerate(medicos_disponibles, 1):
+                print(f"{i}. Dr. {medico.nombre}")
+            medico_index = int(Prompt.ask("Seleccione el número del médico")) - 1
+            medico = medicos_disponibles[medico_index]
+            fecha = Prompt.ask("Ingrese la fecha de la cita (YYYY-MM-DD)")
+            hora = Prompt.ask("Ingrese la hora de la cita (HH:MM)")
+            fecha_hora = datetime.strptime(f"{fecha} {hora}", "%Y-%m-%d %H:%M")
+            cita = Cita(paciente, medico, fecha_hora)
+            hospital.agenda.agendar_cita(cita)
+        else:
+            print(f"No hay médicos disponibles para la especialidad '{especialidad}'")
+    else:
+        print("Paciente no encontrado")
+
+def cancelar_cita(hospital):
+    cita_id = Prompt.ask("Ingrese el ID de la cita a cancelar")
+    exito = hospital.agenda.cancelar_cita(cita_id)
+    if exito:
+        print("Cita cancelada exitosamente.")
+    else:
+        print("No se encontró la cita con ese ID.")
+
+def mover_cita(hospital):
+    cita_id = Prompt.ask("Ingrese el ID de la cita a mover")
+    nueva_fecha = Prompt.ask("Ingrese la nueva fecha de la cita (YYYY-MM-DD)")
+    nueva_hora = Prompt.ask("Ingrese la nueva hora de la cita (HH:MM)")
+    nueva_fecha_hora = datetime.strptime(f"{nueva_fecha} {nueva_hora}", "%Y-%m-%d %H:%M")
+    exito = hospital.agenda.mover_cita(cita_id, nueva_fecha_hora)
+    if exito:
+        print("Cita movida exitosamente.")
+    else:
+        print("No se encontró la cita con ese ID.")
+
+def ver_citas_paciente(hospital):
+    paciente_id = Prompt.ask("Ingrese la identificación del paciente")
+    citas = hospital.agenda.obtener_citas_por_paciente(paciente_id)
+    if citas:
+        table = Table(title=f"[bold white]CITAS PARA EL PACIENTE {paciente_id}[/bold white]")
+        table.add_column("ID CITA", style="cyan")
+        table.add_column("FECHA Y HORA", style="yellow")
+        table.add_column("MÉDICO", style="magenta")
+        table.add_column("ESPECIALIDAD", style="green")
+        for cita in citas:
+            table.add_row(cita.id, cita.fecha_hora.strftime("%Y-%m-%d %H:%M"), cita.medico.nombre, cita.medico.especialidad)
+        console.print(table)
+    else:
+        print("No se encontraron citas para ese paciente.")
+
+def ver_citas_medico(hospital):
+    medico_id = Prompt.ask("Ingrese la identificación del médico")
+    citas = hospital.agenda.obtener_citas_por_medico(medico_id)
+    if citas:
+        table = Table(title=f"[bold white]CITAS PARA EL MÉDICO {medico_id}[/bold white]")
+        table.add_column("ID CITA", style="cyan")
+        table.add_column("FECHA Y HORA", style="yellow")
+        table.add_column("PACIENTE", style="magenta")
+        table.add_column("ESPECIALIDAD", style="green")
+        for cita in citas:
+            table.add_row(cita.id, cita.fecha_hora.strftime("%Y-%m-%d %H:%M"), cita.paciente.nombre, cita.medico.especialidad)
+        console.print(table)
+    else:
+        print("No se encontraron citas para ese médico.")
 
 def main():
     hospital = cargar_datos_iniciales()
 
     while True:
-        mostrar_menu()
-        opcion = Prompt.ask(
-            "Seleccione una opción",
-            choices=[
-                "1",
-                "2",
-                "3",
-                "4",
-                "5",
-                "6",
-                "7",
-                "8",
-                "9",
-                "10",
-                "11",
-                "12",
-                "13",
-                "14",
-                "15",
-            ],
-        )
+        mostrar_menu_principal()
+        opcion_principal = Prompt.ask("Seleccione una categoría", choices=["1", "2", "3", "4", "5"])
 
-        if opcion == "1":
-            identificacion = Prompt.ask("Ingrese la identificación del paciente")
-            nombre = Prompt.ask("Ingrese el nombre del paciente")
-            celular = Prompt.ask("Ingrese el celular del paciente")
-            correo = Prompt.ask("Ingrese el correo del paciente")
-            paciente = Paciente(identificacion, nombre, celular, correo)
-            hospital.agregar_paciente(paciente)
+        if opcion_principal == "1":  
+            while True:
+                mostrar_menu_pacientes()
+                opcion = Prompt.ask("Seleccione una opción", choices=["1", "2", "3", "4"])
+                if opcion == "1":
+                    agregar_paciente(hospital)
+                elif opcion == "2":
+                    mostrar_lista_pacientes(hospital)
+                elif opcion == "3":
+                    buscar_paciente(hospital)
+                elif opcion == "4":
+                    break
 
-        elif opcion == "2":
-            identificacion = Prompt.ask("Ingrese la identificación del médico")
-            nombre = Prompt.ask("Ingrese el nombre del médico")
-            celular = Prompt.ask("Ingrese el celular del médico")
-            especialidad = Prompt.ask("Ingrese la especialidad del médico")
-            medico = Medico(identificacion, nombre, celular, especialidad)
-            hospital.agregar_medico(medico)
+        elif opcion_principal == "2":  
+            while True:
+                mostrar_menu_medicos()
+                opcion = Prompt.ask("Seleccione una opción", choices=["1", "2", "3", "4"])
+                if opcion == "1":
+                    agregar_medico(hospital)
+                elif opcion == "2":
+                    mostrar_lista_medicos(hospital)
+                elif opcion == "3":
+                    buscar_medico(hospital)
+                elif opcion == "4":
+                    break
 
-        elif opcion == "3":
-            paciente_id = Prompt.ask("Ingrese la identificación del paciente")
-            paciente = hospital.buscar_paciente(paciente_id)
-            if paciente:
-                especialidad = Prompt.ask("Ingrese la especialidad requerida")
-                medicos_disponibles = hospital.buscar_medicos_por_especialidad(
-                    especialidad
-                )
-                if medicos_disponibles:
-                    print("Médicos disponibles:")
-                    for i, medico in enumerate(medicos_disponibles, 1):
-                        print(f"{i}. Dr. {medico.nombre}")
-                    medico_index = (
-                        int(Prompt.ask("Seleccione el número del médico")) - 1
-                    )
-                    medico = medicos_disponibles[medico_index]
-                    fecha = Prompt.ask("Ingrese la fecha de la cita (YYYY-MM-DD)")
-                    hora = Prompt.ask("Ingrese la hora de la cita (HH:MM)")
-                    fecha_hora = datetime.strptime(f"{fecha} {hora}", "%Y-%m-%d %H:%M")
-                    cita = Cita(paciente, medico, fecha_hora)
-                    hospital.agenda.agendar_cita(cita)
-                else:
-                    print(
-                        f"No hay médicos disponibles para la especialidad {especialidad}"
-                    )
-            else:
-                print("Paciente no encontrado")
+        elif opcion_principal == "3":  
+            while True:
+                mostrar_menu_citas()
+                opcion = Prompt.ask("Seleccione una opción", choices=["1", "2", "3", "4", "5", "6", "7"])
+                if opcion == "1":
+                    agendar_cita(hospital)
+                elif opcion == "2":
+                    cancelar_cita(hospital)
+                elif opcion == "3":
+                    mover_cita(hospital)
+                elif opcion == "4":
+                    print("Función para agendar cita urgente (a implementar)")
+                elif opcion == "5":
+                    ver_citas_paciente(hospital)
+                elif opcion == "6":
+                    ver_citas_medico(hospital)
+                elif opcion == "7":
+                    break
 
-        elif opcion == "4":
-            paciente_id = Prompt.ask("Ingrese la identificación del paciente")
-            paciente = hospital.buscar_paciente(paciente_id)
-            if paciente:
-                citas_paciente = hospital.agenda.buscar_citas_paciente(paciente)
-                if citas_paciente:
-                    print("Citas del paciente:")
-                    for i, cita in enumerate(citas_paciente, 1):
-                        print(f"{i}. {cita}")
-                    cita_index = (
-                        int(Prompt.ask("Seleccione el número de la cita a cancelar"))
-                        - 1
-                    )
-                    cita = citas_paciente[cita_index]
-                    motivo = Prompt.ask("Ingrese el motivo de la cancelación")
-                    hospital.agenda.cancelar_cita(cita, motivo)
-                else:
-                    print("El paciente no tiene citas programadas")
-            else:
-                print("Paciente no encontrado")
+        elif opcion_principal == "4":  
+            while True:
+                mostrar_menu_reportes()
+                opcion = Prompt.ask("Seleccione una opción", choices=["1", "2", "3"])
+                if opcion == "1":
+                    print("Función para ver calificaciones de médicos")
+                elif opcion == "2":
+                    print("Función para agregar feedback a una cita")
+                elif opcion == "3":
+                    break
 
-        elif opcion == "5":
-            paciente_id = Prompt.ask("Ingrese la identificación del paciente")
-            paciente = hospital.buscar_paciente(paciente_id)
-            if paciente:
-                citas_paciente = hospital.agenda.buscar_citas_paciente(paciente)
-                if citas_paciente:
-                    print("Citas del paciente:")
-                    for i, cita in enumerate(citas_paciente, 1):
-                        print(f"{i}. {cita}")
-                    cita_index = (
-                        int(Prompt.ask("Seleccione el número de la cita a mover")) - 1
-                    )
-                    cita = citas_paciente[cita_index]
-                    nueva_fecha = Prompt.ask(
-                        "Ingrese la nueva fecha de la cita (YYYY-MM-DD)"
-                    )
-                    nueva_hora = Prompt.ask("Ingrese la nueva hora de la cita (HH:MM)")
-                    nueva_fecha_hora = datetime.strptime(
-                        f"{nueva_fecha} {nueva_hora}", "%Y-%m-%d %H:%M"
-                    )
-                    hospital.agenda.mover_cita(cita, nueva_fecha_hora)
-                else:
-                    print("El paciente no tiene citas programadas")
-            else:
-                print("Paciente no encontrado")
-
-        elif opcion == "6":
-            paciente_id = Prompt.ask("Ingrese la identificación del paciente")
-            paciente = hospital.buscar_paciente(paciente_id)
-            if paciente:
-                citas_paciente = hospital.agenda.buscar_citas_paciente(paciente)
-                if citas_paciente:
-                    print("Citas del paciente:")
-                    for cita in citas_paciente:
-                        print(cita)
-                else:
-                    print("El paciente no tiene citas programadas")
-            else:
-                print("Paciente no encontrado.")
-
-        elif opcion == "7":
-            medico_id = Prompt.ask("Ingrese la identificación del médico")
-            medico = hospital.buscar_medico(medico_id)
-            if medico:
-                citas_medico = hospital.agenda.buscar_citas_medico(medico)
-                if citas_medico:
-                    print("Citas del médico:")
-                    for cita in citas_medico:
-                        print(cita)
-                else:
-                    print("El médico no tiene citas programadas")
-            else:
-                print("Médico no encontrado")
-
-        elif opcion == "8":
-            mostrar_lista_pacientes(hospital)
-
-        elif opcion == "9":
-            mostrar_lista_medicos(hospital)
-
-        elif opcion == "10":
-            paciente_id = Prompt.ask("Ingrese la identificación del paciente")
-            paciente = hospital.buscar_paciente(paciente_id)
-            if paciente:
-                table = Table(
-                    title="[bold white]PACIENTE ENCONTRADO EN EL HOSPITAL[/bold white]"
-                )
-                table.add_column("ID", style="cyan")
-                table.add_column("NOMBRE COMPLETO", style="magenta")
-                table.add_column("CELULAR", style="green")
-                table.add_column("CORREO ELECTRÓNICO", style="yellow")
-
-                table.add_row(
-                    paciente.identificacion,
-                    paciente.nombre,
-                    paciente.celular,
-                    paciente.correo,
-                )
-
-                console.print(table)
-            else:
-                print("Paciente no encontrado.")
-
-        elif opcion == "11":
-            medico_id = Prompt.ask("Ingrese la identificación del médico")
-            medico = hospital.buscar_medico(medico_id)
-            if medico:
-                table = Table(
-                    title="[bold white]MÉDICO ENCONTRADO EN EL HOSPITAL[/bold white]"
-                )
-                table.add_column("ID", style="cyan")
-                table.add_column("NOMBRE COMPLETO", style="magenta")
-                table.add_column("ESPECIALIDAD", style="green")
-                table.add_column("CELULAR", style="yellow")
-
-                table.add_row(
-                    medico.identificacion,
-                    medico.nombre,
-                    medico.especialidad,
-                    medico.celular,
-                )
-
-                console.print(table)
-            else:
-                print("Médico no encontrado.")
-
-        elif opcion == "12":
-            paciente_id = Prompt.ask("Ingrese la identificación del paciente")
-            paciente = hospital.buscar_paciente(paciente_id)
-            if paciente:
-                especialidad = Prompt.ask(
-                    "Ingrese la especialidad requerida para la urgencia"
-                )
-                medicos_disponibles = hospital.buscar_medicos_por_especialidad(
-                    especialidad
-                )
-                if medicos_disponibles:
-                    print("Médicos disponibles:")
-                    for i, medico in enumerate(medicos_disponibles, 1):
-                        print(f"{i}. Dr. {medico.nombre}")
-                    medico_index = (
-                        int(Prompt.ask("Seleccione el número del médico")) - 1
-                    )
-                    medico = medicos_disponibles[medico_index]
-                    fecha = Prompt.ask(
-                        "Ingrese la fecha de la cita urgente (YYYY-MM-DD)"
-                    )
-                    hora = Prompt.ask("Ingrese la hora de la cita urgente (HH:MM)")
-                    fecha_hora = datetime.strptime(f"{fecha} {hora}", "%Y-%m-%d %H:%M")
-                    try:
-                        hospital.agendar_cita_urgente(paciente, medico, fecha_hora)
-                    except ValueError as e:
-                        console.print(
-                            f"[red]Error al agendar cita urgente: {str(e)}[/red]"
-                        )
-                else:
-                    print(
-                        f"No hay médicos disponibles para la especialidad {especialidad}"
-                    )
-            else:
-                print("Paciente no encontrado")
-
-        elif opcion == "13":
-            paciente_id = Prompt.ask("Ingrese la identificación del paciente")
-            paciente = hospital.buscar_paciente(paciente_id)
-            if paciente:
-                citas_paciente = hospital.agenda.buscar_citas_paciente(paciente)
-                if citas_paciente:
-                    print("Citas del paciente:")
-                    for i, cita in enumerate(citas_paciente, 1):
-                        print(f"{i}. {cita}")
-                    cita_index = (
-                        int(
-                            Prompt.ask(
-                                "Seleccione el número de la cita para agregar feedback"
-                            )
-                        )
-                        - 1
-                    )
-                    cita = citas_paciente[cita_index]
-                    calificacion = float(Prompt.ask("Ingrese la calificación (0-5)"))
-                    comentario = Prompt.ask("Ingrese un comentario sobre la cita")
-                    hospital.agregar_feedback_cita(cita, calificacion, comentario)
-                else:
-                    print("El paciente no tiene citas para calificar")
-            else:
-                print("Paciente no encontrado")
-
-        elif opcion == "14":
-            table = Table(
-                title="[bold white]CALIFICACIÓN PROMEDIO POR MÉDICO[/bold white]"
-            )
-            table.add_column("Nombre del Médico", style="cyan")
-            table.add_column("Especialidad", style="magenta")
-            table.add_column("Calificación Promedio", style="yellow")
-
-            for medico in hospital.medicos:
-                calificacion_promedio = round(medico.calificacion_promedio(), 2)
-                table.add_row(
-                    medico.nombre, medico.especialidad, str(calificacion_promedio)
-                )
-
-            console.print(table)
-
-        elif opcion == "15":
-            print("Gracias por usar el Sistema de Citas Médicas. ¡Hasta luego!")
+        elif opcion_principal == "5":
+            print("Saliendo del sistema. Hasta luego!")
             break
-
-        console.print("\nPresione Enter para continuar...")
-        input()
-
 
 if __name__ == "__main__":
     main()
