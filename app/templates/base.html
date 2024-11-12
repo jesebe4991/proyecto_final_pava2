@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Hospital App{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="{{ url_for('index') }}">Hospital App</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <!-- Submenú de Médicos -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarMedicos" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Médicos
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarMedicos">
+                                <li><a class="dropdown-item" href="{{ url_for('mostrar_lista_medicos') }}">Lista de Médicos</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('agregar_medico') }}">Agregar Médico</a></li>
+                            </ul>
+                        </li>
+                        <!-- Submenú de Citas -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarCitas" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Citas
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarCitas">
+                                <li><a class="dropdown-item" href="{{ url_for('mostrar_lista_citas') }}">Lista de Citas</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('agendar_cita') }}">Agendar Cita</a></li>
+                            </ul>
+                        </li>
+                        <!-- Submenú de Pacientes -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarPacientes" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Pacientes
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarPacientes">
+                                <li><a class="dropdown-item" href="{{ url_for('mostrar_lista_pacientes') }}">Lista de Pacientes</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('agregar_paciente') }}">Agregar Paciente</a></li>
+                            </ul>
+                        </li>
+                        <!-- Submenú de Consultas y Reportes -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarConsultasReportes" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Consultas y Reportes
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarConsultasReportes">
+                                <!--  -->
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main class="container mt-4">
+        {% block content %}{% endblock %}
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

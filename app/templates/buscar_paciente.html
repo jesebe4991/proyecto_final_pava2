@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Buscar Paciente</title>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Buscar Paciente</h2>
+        <form method="POST" action="{{ url_for('buscar_paciente') }}">
+            <div class="mb-3">
+                <label for="identificacion">Identificación del Paciente:</label>
+                <input type="text" id="identificacion" name="identificacion" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Buscar</button>
+            <a href="{{ url_for('mostrar_lista_pacientes') }}" class="btn btn-secondary">Volver</a>
+        </form>
+
+        {% if paciente %}
+        <h3 class="mt-5">Paciente Encontrado</h3>
+        <table class="table">
+            <tr><th>ID:</th><td>{{ paciente.identificacion }}</td></tr>
+            <tr><th>Nombre Completo:</th><td>{{ paciente.nombre }}</td></tr>
+            <tr><th>Celular:</th><td>{{ paciente.celular }}</td></tr>
+            <tr><th>Correo Electrónico:</th><td>{{ paciente.correo }}</td></tr>
+        </table>
+        {% elif paciente is not none %}
+        <p>No se encontró el paciente.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Lista de Médicos{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Lista de Médicos</h2>
+    <a href="{{ url_for('agregar_medico') }}" class="btn btn-success">Agregar Médico</a>
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">Volver</a>
+    <div class="mb-3 mt-3">
+        <label for="buscar_id" class="form-label">Buscar por ID:</label>
+        <input type="text" id="buscar_id" class="form-control" placeholder="Ingrese el ID del médico">
+    </div>
+    <table class="table mt-3">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre Completo</th>
+                <th>Especialidad</th>
+                <th>Celular</th>
+            </tr>
+        </thead>
+        <tbody id="tabla_medicos">
+            {% for medico in medicos %}
+            <tr>
+                <td>{{ medico.identificacion }}</td>
+                <td>{{ medico.nombre }}</td>
+                <td>{{ medico.especialidad }}</td>
+                <td>{{ medico.celular }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="d-flex justify-content-center">
+        {{ pagination.links }}
+    </div>
+</div>
+
+<script>
+    let timeout = null;
+    document.getElementById('buscar_id').addEventListener('input', function () {
+        clearTimeout(timeout);
+        timeout = setTimeout(function () {
+            const id = document.getElementById('buscar_id').value;
+            fetch(`/medicos?buscar_id=${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.getElementById('tabla_medicos');
+                    tbody.innerHTML = '';
+                    data.forEach(medico => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${medico.identificacion}</td>
+                            <td>${medico.nombre}</td>
+                            <td>${medico.especialidad}</td>
+                            <td>${medico.celular}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                });
+        }, 1000);
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,44 @@
+/* Fondo de la página y estilos generales */
+body {
+    background-color: #e0f7fa;
+    font-family: Arial, sans-serif;
+    color: #003366;
+}
+
+/* Fondo y color de texto en el navbar */
+.navbar {
+    background-color: #007bff;
+}
+
+.navbar-brand, .nav-link {
+    color: #f8f9fa !important;
+}
+
+/* Colores de los botones y enlaces */
+.dropdown-item {
+    color: #003366;
+}
+
+.dropdown-item:hover {
+    background-color: #cfe2ff;
+    color: #003366;
+}
+
+/* Estilos de la sección principal */
+.bg-light-blue {
+    background-color: #81d4fa;
+    padding: 3rem 0;
+    border-radius: 8px;
+}
+
+/* Color y espaciado del texto en la bienvenida */
+h1, p.lead {
+    color: #003366;
+}
+
+/* Adaptación para pantallas pequeñas */
+@media (max-width: 768px) {
+    .bg-light-blue {
+        padding: 2rem;
+    }
+}
