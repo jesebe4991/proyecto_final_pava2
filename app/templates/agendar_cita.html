@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Agregar Cita{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Agendar Cita</h2>
+    <form method="GET" action="{{ url_for('agendar_cita') }}">
+        <div class="mb-3">
+            <label for="nombre_paciente" class="form-label">Buscar Paciente:</label>
+            <input type="text" id="nombre_paciente" name="nombre_paciente" class="form-control" value="{{ nombre_paciente }}">
+        </div>
+        <div class="mb-3">
+            <label for="nombre_medico" class="form-label">Buscar Médico:</label>
+            <input type="text" id="nombre_medico" name="nombre_medico" class="form-control" value="{{ nombre_medico }}">
+        </div>
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+    <form method="POST" action="{{ url_for('agendar_cita') }}">
+        <div class="mb-3">
+            <label for="fecha" class="form-label">Fecha:</label>
+            <input type="date" id="fecha" name="fecha" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label for="hora" class="form-label">Hora:</label>
+            <input type="time" id="hora" name="hora" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label for="paciente" class="form-label">Paciente:</label>
+            <select id="paciente" name="paciente_id" class="form-select" required>
+                {% for paciente in pacientes %}
+                <option value="{{ paciente.id }}">{{ paciente.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="especialidad" class="form-label">Especialidad:</label>
+            <select id="especialidad" name="especialidad" class="form-select" required>
+                {% for medico in medicos %}
+                <option value="{{ medico.especialidad }}">{{ medico.especialidad }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="urgente" name="urgente">
+            <label class="form-check-label" for="urgente">¿Es urgente?</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Agregar Cita</button>
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">Volver</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Agregar Cita{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h2>Agregar Paciente</h2>
+        <form method="POST" action="{{ url_for('agregar_paciente') }}">
+            <div class="mb-3">
+                <label for="identificacion">Identificación:</label>
+                <input type="text" id="identificacion" name="identificacion" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="nombre">Nombre Completo:</label>
+                <input type="text" id="nombre" name="nombre" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="celular">Celular:</label>
+                <input type="text" id="celular" name="celular" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="correo">Correo Electrónico:</label>
+                <input type="email" id="correo" name="correo" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Agregar</button>
+            <a href="{{ url_for('mostrar_lista_pacientes') }}" class="btn btn-secondary">Volver</a>
+        </form>
+    </div>
+{% endblock %}
+
