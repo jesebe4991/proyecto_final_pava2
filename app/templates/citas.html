@@ -7,6 +7,10 @@
     <h2>Lista de Citas</h2>
     <a href="{{ url_for('agendar_cita') }}" class="btn btn-success">Agregar Cita</a>
     <a href="{{ url_for('index') }}" class="btn btn-secondary">Volver</a>
+    <div class="mb-3 mt-3">
+        <label for="buscar_fecha" class="form-label">Buscar por Fecha:</label>
+        <input type="date" id="buscar_fecha" class="form-control" placeholder="Ingrese la fecha de la cita">
+    </div>
     <table class="table mt-3">
         <thead>
             <tr>
@@ -17,12 +21,12 @@
                 <th>Médico</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="tabla_citas">
             {% for cita in citas %}
             <tr>
                 <td>{{ cita.id }}</td>
-                <td>{{ cita.fecha }}</td>
-                <td>{{ cita.hora }}</td>
+                <td>{{ cita.fecha_hora.strftime('%Y-%m-%d') }}</td>
+                <td>{{ cita.fecha_hora.strftime('%H:%M') }}</td>
                 <td>{{ cita.paciente.nombre }}</td>
                 <td>{{ cita.medico.nombre }}</td>
             </tr>
@@ -33,4 +37,31 @@
         {{ pagination.links }}
     </div>
 </div>
+
+<script>
+    let timeout = null;
+    document.getElementById('buscar_fecha').addEventListener('input', function () {
+        clearTimeout(timeout);
+        timeout = setTimeout(function () {
+            const fecha = document.getElementById('buscar_fecha').value;
+            fetch(`/citas?buscar_fecha=${fecha}`)
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.getElementById('tabla_citas');
+                    tbody.innerHTML = '';
+                    data.forEach(cita => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${cita.id}</td>
+                            <td>${cita.fecha}</td>
+                            <td>${cita.hora}</td>
+                            <td>${cita.paciente}</td>
+                            <td>${cita.medico}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                });
+        }, 1000);
+    });
+</script>
 {% endblock %}

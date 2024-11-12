@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_paginate import Pagination, get_page_parameter
 from datetime import datetime
 from hospital import Hospital
@@ -24,9 +24,25 @@ def index():
     return render_template("index.html")
 
 # Rutas para Pacientes
-@app.route("/pacientes")
+@app.route('/pacientes')
 def mostrar_lista_pacientes():
-    return render_template("pacientes.html", pacientes=hospital.pacientes)
+    buscar_id = request.args.get('buscar_id', '')
+    page = request.args.get(get_page_parameter(), type=int, default=1)
+    per_page = 20
+    start = (page - 1) * per_page
+    end = start + per_page
+
+    if buscar_id:
+        pacientes_filtrados = [p for p in hospital.pacientes if buscar_id in p.identificacion]
+        total = len(pacientes_filtrados)
+        pacientes = pacientes_filtrados[start:end]
+        return jsonify([{'identificacion': p.identificacion, 'nombre': p.nombre, 'celular': p.celular, 'correo': p.correo} for p in pacientes])
+    else:
+        total = len(hospital.pacientes)
+        pacientes = hospital.pacientes[start:end]
+
+    pagination = Pagination(page=page, total=total, per_page=per_page, css_framework='bootstrap4')
+    return render_template('pacientes.html', pacientes=pacientes, pagination=pagination)
 
 @app.route("/pacientes/agregar", methods=["GET", "POST"])
 def agregar_paciente():
@@ -50,14 +66,24 @@ def buscar_paciente():
     return render_template("buscar_paciente.html", paciente=None)
 
 # Rutas para Médicos
-@app.route("/medicos")
+@app.route('/medicos')
 def mostrar_lista_medicos():
+    buscar_id = request.args.get('buscar_id', '')
     page = request.args.get(get_page_parameter(), type=int, default=1)
     per_page = 20
     start = (page - 1) * per_page
     end = start + per_page
-    medicos = hospital.medicos[start:end]
-    pagination = Pagination(page=page, total=len(hospital.medicos), per_page=per_page, css_framework='bootstrap4')
+
+    if buscar_id:
+        medicos_filtrados = [m for m in hospital.medicos if buscar_id in m.identificacion]
+        total = len(medicos_filtrados)
+        medicos = medicos_filtrados[start:end]
+        return jsonify([{'identificacion': m.identificacion, 'nombre': m.nombre, 'especialidad': m.especialidad, 'celular': m.celular} for m in medicos])
+    else:
+        total = len(hospital.medicos)
+        medicos = hospital.medicos[start:end]
+
+    pagination = Pagination(page=page, total=total, per_page=per_page, css_framework='bootstrap4')
     return render_template('medicos.html', medicos=medicos, pagination=pagination)
 
 @app.route("/medicos/agregar", methods=["GET", "POST"])
@@ -82,17 +108,27 @@ def buscar_medico():
     return render_template("buscar_medico.html", medico=None)
 
 # Rutas para Citas
-@app.route("/citas")
+@app.route('/citas')
 def mostrar_lista_citas():
+    buscar_fecha = request.args.get('buscar_fecha', '')
     page = request.args.get(get_page_parameter(), type=int, default=1)
     per_page = 20
     start = (page - 1) * per_page
     end = start + per_page
-    citas = hospital.agenda.citas[start:end]
-    pagination = Pagination(page=page, total=len(hospital.agenda.citas), per_page=per_page, css_framework='bootstrap4')
+
+    if buscar_fecha:
+        citas_filtradas = [c for c in hospital.citas if buscar_fecha in c.fecha_hora.strftime('%Y-%m-%d')]
+        total = len(citas_filtradas)
+        citas = citas_filtradas[start:end]
+        return jsonify([{'id': c.id, 'fecha': c.fecha_hora.strftime('%Y-%m-%d'), 'hora': c.fecha_hora.strftime('%H:%M'), 'paciente': c.paciente.nombre, 'medico': c.medico.nombre} for c in citas])
+    else:
+        total = len(hospital.agenda.citas)
+        citas = hospital.agenda.citas[start:end]
+
+    pagination = Pagination(page=page, total=total, per_page=per_page, css_framework='bootstrap4')
     return render_template('citas.html', citas=citas, pagination=pagination)
 
-@app.route("/citas/agendar", methods=["GET", "POST"])
+@app.route("/citas/agendar",  methods=["GET", "POST"])
 def agendar_cita():
     if request.method == "POST":
         es_urgente = request.form["urgente"] == "s"
@@ -116,7 +152,11 @@ def agendar_cita():
         else:
             flash("Paciente no encontrado")
     
-    return render_template("agendar_cita.html", especialidades=hospital.especialidades_disponibles())
+    nombre_paciente = request.args.get('nombre_paciente', '')
+    nombre_medico = request.args.get('nombre_medico', '')
+    pacientes = hospital.listar_pacientes(nombre_paciente)
+    medicos = hospital.listar_medicos(nombre_medico)
+    return render_template('agendar_cita.html', pacientes=pacientes, medicos=medicos, nombre_paciente=nombre_paciente, nombre_medico=nombre_medico, especialidades=hospital.especialidades_disponibles())
 
 @app.route("/citas/cancelar", methods=["POST"])
 def cancelar_cita():

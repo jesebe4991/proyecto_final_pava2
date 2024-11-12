@@ -3,26 +3,62 @@
 {% block title %}Lista de Pacientes{% endblock %}
 
 {% block content %}
-<h1>Lista de Pacientes</h1>
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Nombre Completo</th>
-            <th>Celular</th>
-            <th>Correo Electrónico</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for paciente in pacientes %}
-        <tr>
-            <td>{{ paciente.identificacion }}</td>
-            <td>{{ paciente.nombre }}</td>
-            <td>{{ paciente.celular }}</td>
-            <td>{{ paciente.correo }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-<a href="{{ url_for('index') }}">Volver al Inicio</a>
+<div class="container mt-5">
+    <h2>Lista de Pacientes</h2>
+    <a href="{{ url_for('agregar_paciente') }}" class="btn btn-success">Agregar Paciente</a>
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">Volver</a>
+    <div class="mb-3 mt-3">
+        <label for="buscar_id" class="form-label">Buscar por ID:</label>
+        <input type="text" id="buscar_id" class="form-control" placeholder="Ingrese el ID del paciente">
+    </div>
+    <table class="table mt-3">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre Completo</th>
+                <th>Celular</th>
+                <th>Correo Electrónico</th>
+            </tr>
+        </thead>
+        <tbody id="tabla_pacientes">
+            {% for paciente in pacientes %}
+            <tr>
+                <td>{{ paciente.identificacion }}</td>
+                <td>{{ paciente.nombre }}</td>
+                <td>{{ paciente.celular }}</td>
+                <td>{{ paciente.correo }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="d-flex justify-content-center">
+        {{ pagination.links }}
+    </div>
+</div>
+
+<script>
+    let timeout = null;
+    document.getElementById('buscar_id').addEventListener('input', function () {
+        clearTimeout(timeout);
+        timeout = setTimeout(function () {
+            const id = document.getElementById('buscar_id').value;
+            fetch(`/pacientes?buscar_id=${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.getElementById('tabla_pacientes');
+                    tbody.innerHTML = '';
+                    data.forEach(paciente => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${paciente.identificacion}</td>
+                            <td>${paciente.nombre}</td>
+                            <td>${paciente.celular}</td>
+                            <td>${paciente.correo}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                });
+        }, 1000);
+    });
+</script>
 {% endblock %}

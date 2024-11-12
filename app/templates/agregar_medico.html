@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Agregar Médico</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}Agregar Cita{% endblock %}
+
+{% block content %}
     <div class="container mt-5">
         <h2>Agregar Médico</h2>
         <form method="POST" action="{{ url_for('agregar_medico') }}">
@@ -28,5 +26,4 @@
             <a href="{{ url_for('mostrar_lista_medicos') }}" class="btn btn-secondary">Volver</a>
         </form>
     </div>
-</body>
-</html>
+{% endblock %}

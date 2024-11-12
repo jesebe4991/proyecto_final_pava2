@@ -4,7 +4,18 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2>Agregar Cita</h2>
+    <h2>Agendar Cita</h2>
+    <form method="GET" action="{{ url_for('agendar_cita') }}">
+        <div class="mb-3">
+            <label for="nombre_paciente" class="form-label">Buscar Paciente:</label>
+            <input type="text" id="nombre_paciente" name="nombre_paciente" class="form-control" value="{{ nombre_paciente }}">
+        </div>
+        <div class="mb-3">
+            <label for="nombre_medico" class="form-label">Buscar Médico:</label>
+            <input type="text" id="nombre_medico" name="nombre_medico" class="form-control" value="{{ nombre_medico }}">
+        </div>
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
     <form method="POST" action="{{ url_for('agendar_cita') }}">
         <div class="mb-3">
             <label for="fecha" class="form-label">Fecha:</label>
@@ -23,10 +34,10 @@
             </select>
         </div>
         <div class="mb-3">
-            <label for="medico" class="form-label">Médico:</label>
-            <select id="medico" name="medico_id" class="form-select" required>
+            <label for="especialidad" class="form-label">Especialidad:</label>
+            <select id="especialidad" name="especialidad" class="form-select" required>
                 {% for medico in medicos %}
-                <option value="{{ medico.id }}">{{ medico.nombre }}</option>
+                <option value="{{ medico.especialidad }}">{{ medico.especialidad }}</option>
                 {% endfor %}
             </select>
         </div>

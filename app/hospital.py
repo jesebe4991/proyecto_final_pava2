@@ -145,6 +145,16 @@ class Hospital:
             console.print("[red]Error: No se encontró el archivo CSV de citas.[/red]")
         except Exception as e:
             console.print(f"[red]Error al cargar citas: {str(e)}[/red]")
+            
+    def listar_medicos(self, nombre=None):
+        if nombre:
+            return [medico for medico in self.medicos if nombre.lower() in medico.nombre.lower()]
+        return self.medicos
+
+    def listar_pacientes(self, nombre=None):
+        if nombre:
+            return [paciente for paciente in self.pacientes if nombre.lower() in paciente.nombre.lower()]
+        return self.pacientes
 
     def agendar_cita_urgente(self, paciente, medico, fecha_hora):
         cita_urgente = CitaUrgente(paciente, medico, fecha_hora)
