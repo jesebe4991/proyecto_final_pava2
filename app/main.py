@@ -100,10 +100,9 @@ def mostrar_menu_citas():
             "[1] Agendar cita\n"
             "[2] Cancelar cita\n"
             "[3] Mover cita\n"
-            "[4] Agendar cita urgente\n"
-            "[5] Ver citas de un paciente\n"
-            "[6] Ver citas de un médico\n"
-            "[7] Regresar al menú principal",
+            "[4] Ver citas de un paciente\n"
+            "[5] Ver citas de un médico\n"
+            "[6] Regresar al menú principal",
             title="Menú de Citas",
             border_style="bold cyan",
         )
@@ -165,35 +164,41 @@ def buscar_medico(hospital):
         print("Médico no encontrado.")
 
 def agendar_cita(hospital):
-    paciente_id = Prompt.ask("Ingrese la identificación del paciente")
-    paciente = hospital.buscar_paciente(paciente_id)
-
-    if paciente:
-        especialidad = Prompt.ask("Ingrese la especialidad requerida")
-        medicos_disponibles = hospital.buscar_medicos_por_especialidad(especialidad)
-        
-        if not medicos_disponibles:
-            print(f"No se encontró la especialidad '{especialidad}'. Las especialidades disponibles son:")
-            for especialidad in hospital.especialidades_disponibles():
-                print(f"- {especialidad}")
-            especialidad = Prompt.ask("Por favor, ingrese una especialidad de la lista anterior")
-            medicos_disponibles = hospital.buscar_medicos_por_especialidad(especialidad)
-
-        if medicos_disponibles:
-            print("Médicos disponibles:")
-            for i, medico in enumerate(medicos_disponibles, 1):
-                print(f"{i}. Dr. {medico.nombre}")
-            medico_index = int(Prompt.ask("Seleccione el número del médico")) - 1
-            medico = medicos_disponibles[medico_index]
-            fecha = Prompt.ask("Ingrese la fecha de la cita (YYYY-MM-DD)")
-            hora = Prompt.ask("Ingrese la hora de la cita (HH:MM)")
-            fecha_hora = datetime.strptime(f"{fecha} {hora}", "%Y-%m-%d %H:%M")
-            cita = Cita(paciente, medico, fecha_hora)
-            hospital.agenda.agendar_cita(cita)
-        else:
-            print(f"No hay médicos disponibles para la especialidad '{especialidad}'")
+    es_urgente = input("¿Es una cita urgente? (s/n): ").lower()
+    if es_urgente == 's':
+        print("Agendando una cita urgente...")
+        print("Función para agendar cita urgente (a implementar)")
     else:
-        print("Paciente no encontrado")
+        print("Agendando una cita regular...")
+        paciente_id = Prompt.ask("Ingrese la identificación del paciente")
+        paciente = hospital.buscar_paciente(paciente_id)
+
+        if paciente:
+            especialidad = Prompt.ask("Ingrese la especialidad requerida")
+            medicos_disponibles = hospital.buscar_medicos_por_especialidad(especialidad)
+            
+            if not medicos_disponibles:
+                print(f"No se encontró la especialidad '{especialidad}'. Las especialidades disponibles son:")
+                for especialidad in hospital.especialidades_disponibles():
+                    print(f"- {especialidad}")
+                especialidad = Prompt.ask("Por favor, ingrese una especialidad de la lista anterior")
+                medicos_disponibles = hospital.buscar_medicos_por_especialidad(especialidad)
+
+            if medicos_disponibles:
+                print("Médicos disponibles:")
+                for i, medico in enumerate(medicos_disponibles, 1):
+                    print(f"{i}. Dr. {medico.nombre}")
+                medico_index = int(Prompt.ask("Seleccione el número del médico")) - 1
+                medico = medicos_disponibles[medico_index]
+                fecha = Prompt.ask("Ingrese la fecha de la cita (YYYY-MM-DD)")
+                hora = Prompt.ask("Ingrese la hora de la cita (HH:MM)")
+                fecha_hora = datetime.strptime(f"{fecha} {hora}", "%Y-%m-%d %H:%M")
+                cita = Cita(paciente, medico, fecha_hora)
+                hospital.agenda.agendar_cita(cita)
+            else:
+                print(f"No hay médicos disponibles para la especialidad '{especialidad}'")
+        else:
+            print("Paciente no encontrado")
 
 def cancelar_cita(hospital):
     cita_id = Prompt.ask("Ingrese el ID de la cita a cancelar")
@@ -280,18 +285,18 @@ def main():
         elif opcion_principal == "3":  
             while True:
                 mostrar_menu_citas()
-                opcion = Prompt.ask("Seleccione una opción", choices=["1", "2", "3", "4", "5", "6", "7"])
+                opcion = Prompt.ask("Seleccione una opción", choices=["1", "2", "3", "4", "5", "6"])
                 if opcion == "1":
                     agendar_cita(hospital)
                 elif opcion == "2":
                     cancelar_cita(hospital)
                 elif opcion == "3":
                     mover_cita(hospital)
+                # elif opcion == "4":
+                #     print("Función para agendar cita urgente (a implementar)")
                 elif opcion == "4":
-                    print("Función para agendar cita urgente (a implementar)")
-                elif opcion == "5":
                     ver_citas_paciente(hospital)
-                elif opcion == "6":
+                elif opcion == "5":
                     ver_citas_medico(hospital)
                 elif opcion == "7":
                     break
