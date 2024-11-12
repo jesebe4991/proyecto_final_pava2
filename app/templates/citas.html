@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Lista de Citas{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Lista de Citas</h2>
+    <a href="{{ url_for('agendar_cita') }}" class="btn btn-success">Agregar Cita</a>
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">Volver</a>
+    <table class="table mt-3">
+        <thead>
+            <tr>
+                <th>ID Cita</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Paciente</th>
+                <th>Médico</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cita in citas %}
+            <tr>
+                <td>{{ cita.id }}</td>
+                <td>{{ cita.fecha }}</td>
+                <td>{{ cita.hora }}</td>
+                <td>{{ cita.paciente.nombre }}</td>
+                <td>{{ cita.medico.nombre }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="d-flex justify-content-center">
+        {{ pagination.links }}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Agregar Médico</title>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Agregar Médico</h2>
+        <form method="POST" action="{{ url_for('agregar_medico') }}">
+            <div class="mb-3">
+                <label for="identificacion">Identificación:</label>
+                <input type="text" id="identificacion" name="identificacion" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="nombre">Nombre Completo:</label>
+                <input type="text" id="nombre" name="nombre" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="especialidad">Especialidad:</label>
+                <input type="text" id="especialidad" name="especialidad" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="celular">Celular:</label>
+                <input type="text" id="celular" name="celular" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Agregar</button>
+            <a href="{{ url_for('mostrar_lista_medicos') }}" class="btn btn-secondary">Volver</a>
+        </form>
+    </div>
+</body>
+</html>

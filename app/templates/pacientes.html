@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Lista de Pacientes{% endblock %}
+
+{% block content %}
+<h1>Lista de Pacientes</h1>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre Completo</th>
+            <th>Celular</th>
+            <th>Correo Electrónico</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for paciente in pacientes %}
+        <tr>
+            <td>{{ paciente.identificacion }}</td>
+            <td>{{ paciente.nombre }}</td>
+            <td>{{ paciente.celular }}</td>
+            <td>{{ paciente.correo }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{{ url_for('index') }}">Volver al Inicio</a>
+{% endblock %}

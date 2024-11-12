@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Lista de Médicos{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Lista de Médicos</h2>
+    <a href="{{ url_for('agregar_medico') }}" class="btn btn-success">Agregar Médico</a>
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">Volver</a>
+    <table class="table mt-3">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre Completo</th>
+                <th>Especialidad</th>
+                <th>Celular</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for medico in medicos %}
+            <tr>
+                <td>{{ medico.identificacion }}</td>
+                <td>{{ medico.nombre }}</td>
+                <td>{{ medico.especialidad }}</td>
+                <td>{{ medico.celular }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="d-flex justify-content-center">
+        {{ pagination.links }}
+    </div>
+</div>
+{% endblock %}

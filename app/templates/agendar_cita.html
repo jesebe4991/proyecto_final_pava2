@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Agregar Cita{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Agregar Cita</h2>
+    <form method="POST" action="{{ url_for('agendar_cita') }}">
+        <div class="mb-3">
+            <label for="fecha" class="form-label">Fecha:</label>
+            <input type="date" id="fecha" name="fecha" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label for="hora" class="form-label">Hora:</label>
+            <input type="time" id="hora" name="hora" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label for="paciente" class="form-label">Paciente:</label>
+            <select id="paciente" name="paciente_id" class="form-select" required>
+                {% for paciente in pacientes %}
+                <option value="{{ paciente.id }}">{{ paciente.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="medico" class="form-label">Médico:</label>
+            <select id="medico" name="medico_id" class="form-select" required>
+                {% for medico in medicos %}
+                <option value="{{ medico.id }}">{{ medico.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="urgente" name="urgente">
+            <label class="form-check-label" for="urgente">¿Es urgente?</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Agregar Cita</button>
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">Volver</a>
+    </form>
+</div>
+{% endblock %}
