@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Reporte de Citas{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Reporte de Citas</h2>
+    <a href="{{ url_for('descargar_reporte_citas') }}" class="btn btn-primary mb-3">Descargar CSV</a>
+    <table class="table mt-3">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Paciente</th>
+                <th>Médico</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cita in citas %}
+            <tr>
+                <td>{{ cita.id }}</td>
+                <td>{{ cita.fecha_hora.strftime('%Y-%m-%d') }}</td>
+                <td>{{ cita.fecha_hora.strftime('%H:%M') }}</td>
+                <td>{{ cita.paciente.nombre }}</td>
+                <td>{{ cita.medico.nombre }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
