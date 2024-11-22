@@ -6,6 +6,7 @@
 <div class="container mt-5">
     <h2>Lista de Citas</h2>
     <a href="{{ url_for('agendar_cita') }}" class="btn btn-success mb-3">Agregar Cita</a>
+    <a href="{{ url_for('index') }}" class="btn btn-secondary  mb-3">Volver</a>
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             <div class="alert alert-info" role="alert">
@@ -22,7 +23,6 @@
     <table class="table mt-3">
         <thead>
             <tr>
-                <th>ID</th>
                 <th>Fecha</th>
                 <th>Hora</th>
                 <th>Paciente</th>
@@ -33,7 +33,6 @@
         <tbody id="tabla_citas">
             {% for cita in citas %}
             <tr>
-                <td>{{ cita.id }}</td>
                 <td>{{ cita.fecha_hora.strftime('%Y-%m-%d') }}</td>
                 <td>{{ cita.fecha_hora.strftime('%H:%M') }}</td>
                 <td>{{ cita.paciente.nombre }}</td>
