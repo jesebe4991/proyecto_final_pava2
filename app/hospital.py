@@ -16,6 +16,7 @@ class Hospital:
     def __init__(self):
         self.pacientes = []
         self.medicos = []
+        self.citas = []
         self.agenda = Agenda()
 
     def agregar_paciente(self, paciente):
@@ -121,13 +122,14 @@ class Hospital:
             with open(archivo, newline="", encoding="utf-8") as csvfile:
                 reader = csv.DictReader(csvfile)
                 for row in reader:
+                    id = row['id']
                     paciente = self.buscar_paciente(row["paciente"])
                     medico = self.buscar_medico(row["medicos"])
                     if paciente and medico:
                         fecha_hora = datetime.strptime(
                             row["fecha_hora"], "%Y-%m-%d %H:%M:%S"
                         )
-                        cita = Cita(paciente, medico, fecha_hora)
+                        cita = Cita(id, paciente, medico, fecha_hora)
                         self.agenda.agendar_cita(cita)
                     else:
                         if not paciente:

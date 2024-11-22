@@ -39,20 +39,20 @@ class Agenda:
             ):
                 return nueva_fecha
 
-    def cancelar_cita(self, cita, motivo):
-        if cita in self.citas:
-            self.citas.remove(cita)
-            cita.motivo_cancelacion = motivo
-            print(f"Cita cancelada: {cita}")
-        else:
-            print("La cita no existe en la agenda.")
+    def cancelar_cita(self, cita_id, motivo):
+        for cita in self.citas:
+            if cita.id == cita_id:
+                self.citas.remove(cita)
+                print(f"Cita cancelada. Motivo: {motivo}")
+                return True
+        return False
 
-    def mover_cita(self, cita, nueva_fecha_hora):
-        if cita in self.citas:
-            cita.fecha_hora = nueva_fecha_hora
-            print(f"Cita movida: {cita}")
-        else:
-            print("La cita no existe en la agenda.")
+    def mover_cita(self, cita_id, nueva_fecha_hora):
+        for cita in self.citas:
+            if cita.id == cita_id:
+                cita.fecha_hora = nueva_fecha_hora
+                return True
+        return False
 
     def buscar_citas_paciente(self, paciente):
         return [cita for cita in self.citas if cita.paciente == paciente]

@@ -1,47 +1,14 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Consultas y Reportes</title>
-</head>
-<body>
-    <div class="container mt-5">
-        <h2>Consultas y Reportes</h2>
-        <form method="POST" action="{{ url_for('generar_reporte') }}">
-            <div class="mb-3">
-                <label for="tipo_reporte">Seleccione el tipo de reporte:</label>
-                <select id="tipo_reporte" name="tipo_reporte" class="form-control" required>
-                    <option value="citas_paciente">Citas por Paciente</option>
-                    <option value="citas_medico">Citas por Médico</option>
-                    <option value="citas_fecha">Citas por Fecha</option>
-                </select>
-            </div>
-            <button type="submit" class="btn btn-primary">Generar Reporte</button>
-        </form>
+{% extends "base.html" %}
 
-        {% if reporte %}
-        <h3 class="mt-5">Reporte</h3>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Fecha</th>
-                    <th>Hora</th>
-                    <th>Paciente</th>
-                    <th>Médico</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for cita in reporte %}
-                <tr>
-                    <td>{{ cita.fecha }}</td>
-                    <td>{{ cita.hora }}</td>
-                    <td>{{ cita.paciente.nombre }}</td>
-                    <td>{{ cita.medico.nombre }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% endif %}
-    </div>
-</body>
-</html>
+{% block title %}Reportes{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Reportes</h2>
+    <ul>
+        <li><a href="{{ url_for('reporte_pacientes') }}">Reporte de Pacientes</a></li>
+        <li><a href="{{ url_for('reporte_medicos') }}">Reporte de Médicos</a></li>
+        <li><a href="{{ url_for('reporte_citas') }}">Reporte de Citas</a></li>
+    </ul>
+</div>
+{% endblock %}

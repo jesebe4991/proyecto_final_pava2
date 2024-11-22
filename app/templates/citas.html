@@ -5,8 +5,16 @@
 {% block content %}
 <div class="container mt-5">
     <h2>Lista de Citas</h2>
-    <a href="{{ url_for('agendar_cita') }}" class="btn btn-success">Agregar Cita</a>
-    <a href="{{ url_for('index') }}" class="btn btn-secondary">Volver</a>
+    <a href="{{ url_for('agendar_cita') }}" class="btn btn-success mb-3">Agregar Cita</a>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="alert alert-info" role="alert">
+                {% for category, message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
     <div class="mb-3 mt-3">
         <label for="buscar_fecha" class="form-label">Buscar por Fecha:</label>
         <input type="date" id="buscar_fecha" class="form-control" placeholder="Ingrese la fecha de la cita">
@@ -14,11 +22,12 @@
     <table class="table mt-3">
         <thead>
             <tr>
-                <th>ID Cita</th>
+                <th>ID</th>
                 <th>Fecha</th>
                 <th>Hora</th>
                 <th>Paciente</th>
                 <th>Médico</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody id="tabla_citas">
@@ -29,6 +38,64 @@
                 <td>{{ cita.fecha_hora.strftime('%H:%M') }}</td>
                 <td>{{ cita.paciente.nombre }}</td>
                 <td>{{ cita.medico.nombre }}</td>
+                <td>
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#cancelarCitaModal{{ cita.id }}">Cancelar</button>
+                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#moverCitaModal{{ cita.id }}">Mover</button>
+                    
+                    <!-- Modal para cancelar cita -->
+                    <div class="modal fade" id="cancelarCitaModal{{ cita.id }}" tabindex="-1" aria-labelledby="cancelarCitaModalLabel{{ cita.id }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="cancelarCitaModalLabel{{ cita.id }}">Cancelar Cita</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form method="POST" action="{{ url_for('cancelar_cita') }}">
+                                    <div class="modal-body">
+                                        <input type="hidden" name="cita_id" value="{{ cita.id }}">
+                                        <div class="mb-3">
+                                            <label for="motivo" class="form-label">Motivo de Cancelación:</label>
+                                            <textarea class="form-control" name="motivo" required></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                        <button type="submit" class="btn btn-danger">Cancelar Cita</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal para mover cita -->
+                    <div class="modal fade" id="moverCitaModal{{ cita.id }}" tabindex="-1" aria-labelledby="moverCitaModalLabel{{ cita.id }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="moverCitaModalLabel{{ cita.id }}">Mover Cita</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form method="POST" action="{{ url_for('mover_cita') }}">
+                                    <div class="modal-body">
+                                        <input type="hidden" name="cita_id" value="{{ cita.id }}">
+                                        <div class="mb-3">
+                                            <label for="nueva_fecha" class="form-label">Nueva Fecha:</label>
+                                            <input type="date" class="form-control" name="nueva_fecha" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="nueva_hora" class="form-label">Nueva Hora:</label>
+                                            <input type="time" class="form-control" name="nueva_hora" required>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                        <button type="submit" class="btn btn-primary">Mover Cita</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
@@ -52,11 +119,68 @@
                     data.forEach(cita => {
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
-                            <td>${cita.id}</td>
                             <td>${cita.fecha}</td>
                             <td>${cita.hora}</td>
                             <td>${cita.paciente}</td>
                             <td>${cita.medico}</td>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#cancelarCitaModal${cita.id}">Cancelar</button>
+                                <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#moverCitaModal${cita.id}">Mover</button>
+                                
+                                <!-- Modal para cancelar cita -->
+                                <div class="modal fade" id="cancelarCitaModal${cita.id}" tabindex="-1" aria-labelledby="cancelarCitaModalLabel${cita.id}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="cancelarCitaModalLabel${cita.id}">Cancelar Cita</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <form method="POST" action="/citas/cancelar">
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="cita_id" value="${cita.id}">
+                                                    <div class="mb-3">
+                                                        <label for="motivo" class="form-label">Motivo de Cancelación:</label>
+                                                        <textarea class="form-control" name="motivo" required></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                                    <button type="submit" class="btn btn-danger">Cancelar Cita</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Modal para mover cita -->
+                                <div class="modal fade" id="moverCitaModal${cita.id}" tabindex="-1" aria-labelledby="moverCitaModalLabel${cita.id}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="moverCitaModalLabel${cita.id}">Mover Cita</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <form method="POST" action="/citas/mover">
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="cita_id" value="${cita.id}">
+                                                    <div class="mb-3">
+                                                        <label for="nueva_fecha" class="form-label">Nueva Fecha:</label>
+                                                        <input type="date" class="form-control" name="nueva_fecha" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="nueva_hora" class="form-label">Nueva Hora:</label>
+                                                        <input type="time" class="form-control" name="nueva_hora" required>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                                    <button type="submit" class="btn btn-primary">Mover Cita</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
                         `;
                         tbody.appendChild(tr);
                     });
