@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Reporte de Pacientes{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Reporte de Pacientes</h2>
+    <a href="{{ url_for('descargar_reporte_pacientes') }}" class="btn btn-primary mb-3">Descargar CSV</a>
+    <table class="table mt-3">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre Completo</th>
+                <th>Celular</th>
+                <th>Correo Electrónico</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for paciente in pacientes %}
+            <tr>
+                <td>{{ paciente.identificacion }}</td>
+                <td>{{ paciente.nombre }}</td>
+                <td>{{ paciente.celular }}</td>
+                <td>{{ paciente.correo }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

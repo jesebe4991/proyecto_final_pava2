@@ -1,10 +1,13 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, make_response
 from flask_paginate import Pagination, get_page_parameter
 from datetime import datetime
 from hospital import Hospital
 from paciente import Paciente
 from medico import Medico
 from cita import Cita
+import csv
+from cita_urgente import CitaUrgente
+from io import StringIO
 
 app = Flask(__name__)
 app.secret_key = "your_secret_key"  # Para manejar los mensajes flash en la aplicación web
@@ -131,7 +134,7 @@ def mostrar_lista_citas():
 @app.route("/citas/agendar",  methods=["GET", "POST"])
 def agendar_cita():
     if request.method == "POST":
-        es_urgente = request.form["urgente"] == "s"
+        es_urgente = 'urgente' in request.form 
         paciente_id = request.form["paciente_id"]
         especialidad = request.form["especialidad"]
         fecha = request.form["fecha"]
@@ -143,14 +146,16 @@ def agendar_cita():
             if medicos_disponibles:
                 medico = medicos_disponibles[0]  # Elegimos el primer médico disponible para simplificar
                 fecha_hora = datetime.strptime(f"{fecha} {hora}", "%Y-%m-%d %H:%M")
-                cita = Cita(paciente, medico, fecha_hora)
+                cita = Cita(len(hospital.citas) + 1, paciente, medico, fecha_hora)
+                if es_urgente:
+                    cita = CitaUrgente(len(hospital.citas) + 1, paciente, medico, fecha_hora)
                 hospital.agenda.agendar_cita(cita)
                 flash("Cita agendada exitosamente!")
                 return redirect(url_for("mostrar_lista_citas"))
             else:
-                flash("No hay médicos disponibles para esa especialidad")
+                flash("No hay médicos disponibles para la especialidad seleccionada.")
         else:
-            flash("Paciente no encontrado")
+            flash("Paciente no encontrado.")
     
     nombre_paciente = request.args.get('nombre_paciente', '')
     nombre_medico = request.args.get('nombre_medico', '')
@@ -161,7 +166,8 @@ def agendar_cita():
 @app.route("/citas/cancelar", methods=["POST"])
 def cancelar_cita():
     cita_id = request.form["cita_id"]
-    exito = hospital.agenda.cancelar_cita(cita_id)
+    motivo = request.form["motivo"]
+    exito = hospital.agenda.cancelar_cita(cita_id, motivo)
     if exito:
         flash("Cita cancelada exitosamente.")
     else:
@@ -182,9 +188,66 @@ def mover_cita():
     return redirect(url_for("mostrar_lista_citas"))
 
 # Ruta para Consultas y Reportes
-@app.route("/reportes")
+@app.route('/reportes')
 def mostrar_reportes():
-    return render_template("reportes.html")
+    return render_template('reportes.html')
+
+@app.route('/reportes/pacientes')
+def reporte_pacientes():
+    # Lógica para generar el reporte de pacientes
+    pacientes = hospital.pacientes
+    return render_template('reporte_pacientes.html', pacientes=pacientes)
+
+@app.route('/reportes/medicos')
+def reporte_medicos():
+    # Lógica para generar el reporte de médicos
+    medicos = hospital.medicos
+    return render_template('reporte_medicos.html', medicos=medicos)
+
+@app.route('/reportes/citas')
+def reporte_citas():
+    # Lógica para generar el reporte de citas
+    citas = hospital.agenda.citas
+    return render_template('reporte_citas.html', citas=citas)
+
+@app.route('/reportes/citas/descargar')
+def descargar_reporte_citas():
+    citas = hospital.agenda.citas
+    si = StringIO()
+    cw = csv.writer(si)
+    cw.writerow(['Fecha', 'Hora', 'Paciente', 'Médico'])
+    for cita in citas:
+        cw.writerow([cita.fecha_hora.strftime('%Y-%m-%d'), cita.fecha_hora.strftime('%H:%M'), cita.paciente.nombre, cita.medico.nombre])
+    output = make_response(si.getvalue())
+    output.headers["Content-Disposition"] = "attachment; filename=reporte_citas.csv"
+    output.headers["Content-type"] = "text/csv"
+    return output
+
+@app.route('/reportes/pacientes/descargar')
+def descargar_reporte_pacientes():
+    pacientes = hospital.pacientes
+    si = StringIO()
+    cw = csv.writer(si)
+    cw.writerow(['ID', 'Nombre Completo', 'Celular', 'Correo Electrónico'])
+    for paciente in pacientes:
+        cw.writerow([paciente.identificacion, paciente.nombre, paciente.celular, paciente.correo])
+    output = make_response(si.getvalue())
+    output.headers["Content-Disposition"] = "attachment; filename=reporte_pacientes.csv"
+    output.headers["Content-type"] = "text/csv"
+    return output
+
+@app.route('/reportes/medicos/descargar')
+def descargar_reporte_medicos():
+    medicos = hospital.medicos
+    si = StringIO()
+    cw = csv.writer(si)
+    cw.writerow(['ID', 'Nombre Completo', 'Especialidad', 'Celular'])
+    for medico in medicos:
+        cw.writerow([medico.identificacion, medico.nombre, medico.especialidad, medico.celular])
+    output = make_response(si.getvalue())
+    output.headers["Content-Disposition"] = "attachment; filename=reporte_medicos.csv"
+    output.headers["Content-type"] = "text/csv"
+    return output
 
 # Iniciar la aplicación
 if __name__ == "__main__":
