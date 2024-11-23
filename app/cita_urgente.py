@@ -2,6 +2,7 @@ from cita import Cita
 
 
 class CitaUrgente(Cita):
+    # nos muestra las citas prioritarias 
     def __init__(self, paciente, medico, fecha_hora):
         super().__init__(paciente, medico, fecha_hora)
 

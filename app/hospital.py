@@ -13,6 +13,7 @@ from rich.console import Console
 console = Console()
 
 class Hospital:
+    # nos muestra el lugar de la cita 
     def __init__(self):
         self.pacientes = []
         self.medicos = []
@@ -20,18 +21,22 @@ class Hospital:
         self.agenda = Agenda()
 
     def agregar_paciente(self, paciente):
+        # nos muestra la informacion para agendar una cita a un paciente
         self.pacientes.append(paciente)
         print(f"[green]Paciente {paciente.nombre} agregado al hospital.[/green]")
 
     def agregar_medico(self, medico):
+        # nos muestra la informacion para agregar los medicos 
         self.medicos.append(medico)
 
     def buscar_paciente(self, identificacion):
+        # nos permie ubicar los pacienes agregados
         return next(
             (p for p in self.pacientes if p.identificacion == identificacion), None
         )
 
     def buscar_medico(self, identificacion):
+        # nos permite consultar los medicos agregados 
         return next(
             (m for m in self.medicos if m.identificacion == identificacion), None
         )
@@ -118,6 +123,7 @@ class Hospital:
             console.print(f"[red]Error al cargar médicos: {str(e)}[/red]")
 
     def cargar_citas_desde_csv(self, archivo):
+        # nos permie consultar las citas 
         try:
             with open(archivo, newline="", encoding="utf-8") as csvfile:
                 reader = csv.DictReader(csvfile)
@@ -149,20 +155,24 @@ class Hospital:
             console.print(f"[red]Error al cargar citas: {str(e)}[/red]")
             
     def listar_medicos(self, nombre=None):
+        # nos muestra los medicos disponibles 
         if nombre:
             return [medico for medico in self.medicos if nombre.lower() in medico.nombre.lower()]
         return self.medicos
 
     def listar_pacientes(self, nombre=None):
+        # nos muestra los datos del paciente que solicita la cita 
         if nombre:
             return [paciente for paciente in self.pacientes if nombre.lower() in paciente.nombre.lower()]
         return self.pacientes
 
     def agendar_cita_urgente(self, paciente, medico, fecha_hora):
+        # nos muestra las fechas mas cercanas disponibles para agendar una cita
         cita_urgente = CitaUrgente(paciente, medico, fecha_hora)
         self.agenda.agendar_cita(cita_urgente)
 
     def agregar_feedback_cita(self, cita, calificacion, comentario):
+        # nos muestra los datos de la cita 
         if cita in self.agenda.citas:
             cita.agregar_feedback(calificacion, comentario)
             console.print(

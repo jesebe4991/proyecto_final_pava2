@@ -9,4 +9,3 @@
 - entiendo lo que quieres hacer con la calificación, pero debería estar solo asociada a la cita y no al médico (otra razón para que la agenda sea del médico), pero no se válida que la cita ya fuera calificada y permite calificar varias veces la misma cita.
 - el código aunque en general es fácil de leer, carece de documentación y comentarios.
 - las clases hospital y agenda utilizan "rich", eso hace más difícil usar el mismo código en una interfaz web o de otro tipo
-
