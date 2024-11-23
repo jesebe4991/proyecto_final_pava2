@@ -221,6 +221,7 @@ def reporte_citas():
     return render_template('reporte_citas.html', citas=citas)
 
 @app.route('/reportes/citas/descargar')
+#logica para descargar el reporte de las citas 
 def descargar_reporte_citas():
     citas = hospital.agenda.citas
     si = StringIO()
@@ -234,6 +235,7 @@ def descargar_reporte_citas():
     return output
 
 @app.route('/reportes/pacientes/descargar')
+# ruta para descargar reporte sw los pacientes 
 def descargar_reporte_pacientes():
     pacientes = hospital.pacientes
     si = StringIO()
@@ -247,6 +249,7 @@ def descargar_reporte_pacientes():
     return output
 
 @app.route('/reportes/medicos/descargar')
+# ruta para descargar reporte de los medicos 
 def descargar_reporte_medicos():
     medicos = hospital.medicos
     si = StringIO()

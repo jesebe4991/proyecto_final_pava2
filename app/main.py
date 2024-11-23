@@ -328,6 +328,7 @@ def main():
         elif opcion_principal == "4":  
             while True:
                 mostrar_menu_reportes()
+                # nos muestra el reporte de las calificaciones de los medicos 
                 opcion = Prompt.ask("Seleccione una opción", choices=["1", "2", "3"])
                 if opcion == "1":
                     print("Función para ver calificaciones de médicos")

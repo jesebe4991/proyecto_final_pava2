@@ -1,4 +1,5 @@
 class Cita:
+    # nos muestra los datos de la cita 
     def __init__(self, id, paciente, medico, fecha_hora):
         self.paciente = paciente
         self.medico = medico
@@ -12,6 +13,7 @@ class Cita:
         return f"Cita del paciente {self.paciente.nombre} con el Dr. {self.medico.nombre} programada para el {self.fecha_hora.strftime('%Y-%m-%d %H:%M')}"
 
     def agregar_feedback(self, calificacion, comentario):
+        # nos permite realizar la calificacion al medico 
         if self.calificacion is not None:
             print("Esta cita ya ha sido calificada.")
             return

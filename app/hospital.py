@@ -172,6 +172,7 @@ class Hospital:
         self.agenda.agendar_cita(cita_urgente)
 
     def agregar_feedback_cita(self, cita, calificacion, comentario):
+        # nos muestra los datos de la cita 
         if cita in self.agenda.citas:
             cita.agregar_feedback(calificacion, comentario)
             console.print(
