@@ -12,6 +12,11 @@ class Cita:
         return f"Cita del paciente {self.paciente.nombre} con el Dr. {self.medico.nombre} programada para el {self.fecha_hora.strftime('%Y-%m-%d %H:%M')}"
 
     def agregar_feedback(self, calificacion, comentario):
+        if self.calificacion is not None:
+            print("Esta cita ya ha sido calificada.")
+            return
+        
         self.calificacion = calificacion
         self.comentario = comentario
         self.medico.calificaciones.append(calificacion)
+        print ("Claificación y comentario agregados con éxito.")

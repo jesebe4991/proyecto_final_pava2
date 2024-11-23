@@ -36,6 +36,7 @@ def mostrar_lista_pacientes():
     end = start + per_page
 
     if buscar_id:
+        # busqueda por identificacion del paciente
         pacientes_filtrados = [p for p in hospital.pacientes if buscar_id in p.identificacion]
         total = len(pacientes_filtrados)
         pacientes = pacientes_filtrados[start:end]
@@ -49,6 +50,7 @@ def mostrar_lista_pacientes():
 
 @app.route("/pacientes/agregar", methods=["GET", "POST"])
 def agregar_paciente():
+    # datos para crear el paciente en la agenda
     if request.method == "POST":
         identificacion = request.form["identificacion"]
         nombre = request.form["nombre"]
@@ -62,6 +64,7 @@ def agregar_paciente():
 
 @app.route("/pacientes/buscar", methods=["GET", "POST"])
 def buscar_paciente():
+    # permite uicar facilmente el paciente
     if request.method == "POST":
         paciente_id = request.form["identificacion"]
         paciente = hospital.buscar_paciente(paciente_id)
@@ -78,6 +81,7 @@ def mostrar_lista_medicos():
     end = start + per_page
 
     if buscar_id:
+        # nos muestra el medico en especifico que se necesita
         medicos_filtrados = [m for m in hospital.medicos if buscar_id in m.identificacion]
         total = len(medicos_filtrados)
         medicos = medicos_filtrados[start:end]
@@ -91,6 +95,7 @@ def mostrar_lista_medicos():
 
 @app.route("/medicos/agregar", methods=["GET", "POST"])
 def agregar_medico():
+    # nos permite crear nuevos medicos en la base de datos 
     if request.method == "POST":
         identificacion = request.form["identificacion"]
         nombre = request.form["nombre"]
@@ -104,6 +109,7 @@ def agregar_medico():
 
 @app.route("/medicos/buscar", methods=["GET", "POST"])
 def buscar_medico():
+    # rutas para ubicar medicos 
     if request.method == "POST":
         medico_id = request.form["identificacion"]
         medico = hospital.buscar_medico(medico_id)
@@ -120,6 +126,7 @@ def mostrar_lista_citas():
     end = start + per_page
 
     if buscar_fecha:
+        # permite filtrar las fechas que el paciente necesita o que el medico ordena para la cita
         citas_filtradas = [c for c in hospital.citas if buscar_fecha in c.fecha_hora.strftime('%Y-%m-%d')]
         total = len(citas_filtradas)
         citas = citas_filtradas[start:end]
@@ -133,6 +140,7 @@ def mostrar_lista_citas():
 
 @app.route("/citas/agendar",  methods=["GET", "POST"])
 def agendar_cita():
+    # ruta para agendar las citas 
     if request.method == "POST":
         es_urgente = 'urgente' in request.form 
         paciente_id = request.form["paciente_id"]
@@ -165,6 +173,7 @@ def agendar_cita():
 
 @app.route("/citas/cancelar", methods=["POST"])
 def cancelar_cita():
+    # rutas para cancelar citas 
     cita_id = request.form["cita_id"]
     motivo = request.form["motivo"]
     exito = hospital.agenda.cancelar_cita(cita_id, motivo)
@@ -176,6 +185,7 @@ def cancelar_cita():
 
 @app.route("/citas/mover", methods=["POST"])
 def mover_cita():
+    # rutas para mover las citas 
     cita_id = request.form["cita_id"]
     nueva_fecha = request.form["nueva_fecha"]
     nueva_hora = request.form["nueva_hora"]

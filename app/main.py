@@ -12,6 +12,7 @@ from cita import Cita
 console = Console()
 
 def cargar_datos_iniciales():
+    # nos muestra las sedes disponibles 
     hospital = Hospital()
     hospital.cargar_pacientes_desde_csv("data/pacientes.csv")
     hospital.cargar_medicos_desde_json("data/medicos.json")
@@ -19,6 +20,7 @@ def cargar_datos_iniciales():
     return hospital
 
 def mostrar_lista_pacientes(hospital):
+    # nos muestra todas las personas registradas 
     table = Table(title="[bold white]LISTA DE PACIENTES[/bold white]")
     table.add_column("ID", style="cyan")
     table.add_column("NOMBRE COMPLETO", style="magenta")
@@ -31,6 +33,7 @@ def mostrar_lista_pacientes(hospital):
     console.print(table)
 
 def mostrar_lista_medicos(hospital):
+    # nos muestra los medicos disponibles en la sede 
     table = Table(title="[bold white]LISTA DE MÉDICOS[/bold white]")
     table.add_column("ID", style="cyan")
     table.add_column("NOMBRE COMPLETO", style="magenta")
@@ -43,6 +46,7 @@ def mostrar_lista_medicos(hospital):
     console.print(table)
 
 def mostrar_lista_citas(hospital):
+    # nos muestra las fechas y la informacion de las citas 
     table = Table(title="[bold white]LISTA DE CITAS[/bold white]")
     table.add_column("PACIENTE", style="cyan")
     table.add_column("MÉDICO", style="magenta")
@@ -58,6 +62,7 @@ def mostrar_lista_citas(hospital):
     console.print(table)
 
 def mostrar_menu_principal():
+    # nos muestra el menu principal general
     console.print(
         Panel.fit(
             "[1] Pacientes\n"
@@ -71,6 +76,7 @@ def mostrar_menu_principal():
     )
 
 def mostrar_menu_pacientes():
+    # nos muestra el menu de los pacientes 
     console.print(
         Panel.fit(
             "[1] Agregar paciente\n"
@@ -83,6 +89,7 @@ def mostrar_menu_pacientes():
     )
 
 def mostrar_menu_medicos():
+    # nos muestra el menu de cada medico 
     console.print(
         Panel.fit(
             "[1] Agregar médico\n"
@@ -95,6 +102,7 @@ def mostrar_menu_medicos():
     )
 
 def mostrar_menu_citas():
+    # nos muestra el menu de las citas 
     console.print(
         Panel.fit(
             "[1] Agendar cita\n"
@@ -109,6 +117,7 @@ def mostrar_menu_citas():
     )
 
 def mostrar_menu_reportes():
+    # nos muestra el reporte de las calificaciones de los usuarios a los medicos 
     console.print(
         Panel.fit(
             "[1] Ver calificaciones de médicos\n"
@@ -120,6 +129,7 @@ def mostrar_menu_reportes():
     )
 
 def agregar_paciente(hospital):
+    # nos muestra el menu para el registro de nuevos pacientes 
     identificacion = Prompt.ask("Ingrese la identificación del paciente")
     nombre = Prompt.ask("Ingrese el nombre del paciente")
     celular = Prompt.ask("Ingrese el celular del paciente")
@@ -128,6 +138,7 @@ def agregar_paciente(hospital):
     hospital.agregar_paciente(paciente)
 
 def agregar_medico(hospital):
+     # nos muestra el menu para el registro de nuevos medicos
     identificacion = Prompt.ask("Ingrese la identificación del médico")
     nombre = Prompt.ask("Ingrese el nombre del médico")
     celular = Prompt.ask("Ingrese el celular del médico")
@@ -136,6 +147,7 @@ def agregar_medico(hospital):
     hospital.agregar_medico(medico)
 
 def buscar_paciente(hospital):
+     # nos muestra el menu para buscar el registro de pacientes 
     paciente_id = Prompt.ask("Ingrese la identificación del paciente")
     paciente = hospital.buscar_paciente(paciente_id)
     if paciente:
@@ -150,6 +162,7 @@ def buscar_paciente(hospital):
         print("Paciente no encontrado.")
 
 def buscar_medico(hospital):
+    # nos muestra el menu para buscar el registro de medicos 
     medico_id = Prompt.ask("Ingrese la identificación del médico")
     medico = hospital.buscar_medico(medico_id)
     if medico:
@@ -164,20 +177,25 @@ def buscar_medico(hospital):
         print("Médico no encontrado.")
 
 def agendar_cita(hospital):
+    # nos muestra el menu para el agendamiento de citas
     es_urgente = input("¿Es una cita urgente? (s/n): ").lower()
     if es_urgente == 's':
+        # nos muestra el menu para el agendamieno de citas urgentes
         print("Agendando una cita urgente...")
         print("Función para agendar cita urgente (a implementar)")
     else:
+        # nos muestra el menu para el agendamiento de citas no urgentes 
         print("Agendando una cita regular...")
         paciente_id = Prompt.ask("Ingrese la identificación del paciente")
         paciente = hospital.buscar_paciente(paciente_id)
 
         if paciente:
+            # nos permite buscar la especialidad que necesita el paciente
             especialidad = Prompt.ask("Ingrese la especialidad requerida")
             medicos_disponibles = hospital.buscar_medicos_por_especialidad(especialidad)
             
             if not medicos_disponibles:
+                # nos muestra un mensaje de error en la busqueda de la especialidad
                 print(f"No se encontró la especialidad '{especialidad}'. Las especialidades disponibles son:")
                 for especialidad in hospital.especialidades_disponibles():
                     print(f"- {especialidad}")
@@ -185,6 +203,7 @@ def agendar_cita(hospital):
                 medicos_disponibles = hospital.buscar_medicos_por_especialidad(especialidad)
 
             if medicos_disponibles:
+                # nos muestra los medicos disponibles de la especialidad requerida
                 print("Médicos disponibles:")
                 for i, medico in enumerate(medicos_disponibles, 1):
                     print(f"{i}. Dr. {medico.nombre}")
@@ -201,6 +220,7 @@ def agendar_cita(hospital):
             print("Paciente no encontrado")
 
 def cancelar_cita(hospital):
+    # nos muestra el menu para cancelar una cita
     cita_id = Prompt.ask("Ingrese el ID de la cita a cancelar")
     exito = hospital.agenda.cancelar_cita(cita_id)
     if exito:
@@ -209,6 +229,7 @@ def cancelar_cita(hospital):
         print("No se encontró la cita con ese ID.")
 
 def mover_cita(hospital):
+     # nos muestra el menu para trasladar de fecha una cita 
     cita_id = Prompt.ask("Ingrese el ID de la cita a mover")
     nueva_fecha = Prompt.ask("Ingrese la nueva fecha de la cita (YYYY-MM-DD)")
     nueva_hora = Prompt.ask("Ingrese la nueva hora de la cita (HH:MM)")
@@ -220,6 +241,7 @@ def mover_cita(hospital):
         print("No se encontró la cita con ese ID.")
 
 def ver_citas_paciente(hospital):
+    # nos permite msotrar todas las citas asignadas a un paciente
     paciente_id = Prompt.ask("Ingrese la identificación del paciente")
     citas = hospital.agenda.obtener_citas_por_paciente(paciente_id)
     if citas:
@@ -235,6 +257,7 @@ def ver_citas_paciente(hospital):
         print("No se encontraron citas para ese paciente.")
 
 def ver_citas_medico(hospital):
+     # nos permite msotrar todas las citas asignadas a un medico
     medico_id = Prompt.ask("Ingrese la identificación del médico")
     citas = hospital.agenda.obtener_citas_por_medico(medico_id)
     if citas:
@@ -250,6 +273,7 @@ def ver_citas_medico(hospital):
         print("No se encontraron citas para ese médico.")
 
 def main():
+    # nos permite ver el menu inicial del hospital para asisgar, cancelar o mover una cita
     hospital = cargar_datos_iniciales()
 
     while True:

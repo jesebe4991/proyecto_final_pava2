@@ -5,6 +5,7 @@ console = Console()
 
 
 class Agenda:
+    # permite agendar citas para saber el horario de disponibilidad de los medicos y llevar un orden en las citas
     def __init__(self):
         self.citas = []
 
@@ -27,6 +28,7 @@ class Agenda:
                     )
 
         self.citas.append(cita)
+        # permite asignar una fecha y hora a cada paciente
         console.print(f"[green]Cita agendada: {cita}[/green]")
 
     def encontrar_siguiente_horario_disponible(self, medico, fecha_hora):
@@ -55,7 +57,9 @@ class Agenda:
         return False
 
     def buscar_citas_paciente(self, paciente):
+        # permite ubicar la fecha y hora de una cita de un paciente
         return [cita for cita in self.citas if cita.paciente == paciente]
 
     def buscar_citas_medico(self, medico):
+        # permite ubicar la disponibilidad de cada medico 
         return [cita for cita in self.citas if cita.medico == medico]
